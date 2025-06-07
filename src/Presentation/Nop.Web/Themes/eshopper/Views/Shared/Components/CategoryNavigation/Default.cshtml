@@ -1,0 +1,21 @@
+﻿@model CategoryNavigationModel
+
+@if (Model.Categories.Count > 0)
+{
+    <h2>@T("Categories")</h2>
+    <div class="panel-group category-products category-navigation-div" id="accordion">
+        @foreach (var category in Model.Categories)
+                {
+                    var categoryLineModel = new CategoryNavigationModel.CategoryLineModel
+                    {
+                        CurrentCategoryId = Model.CurrentCategoryId,
+                        Category = category
+                    };
+            <div class="panel panel-default">
+
+                @await Html.PartialAsync("_CategoryLine.Navigation.Block", categoryLineModel)
+
+            </div>
+        }
+    </div>
+}

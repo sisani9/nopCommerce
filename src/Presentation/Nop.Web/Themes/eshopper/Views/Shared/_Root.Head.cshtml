@@ -1,0 +1,93 @@
+﻿@using Nop.Core.Domain
+@using StackExchange.Profiling
+@using Nop.Core.Domain.Common
+@using Nop.Core.Domain.Seo
+@using Nop.Services.Events
+@using Nop.Services.Security
+@using Nop.Web.Framework.Events
+@using Nop.Core
+@inject CommonSettings commonSettings
+@inject IEventPublisher eventPublisher
+@inject IPermissionService permissionService
+@inject IWorkContext workContext
+@inject SeoSettings seoSettings
+@inject StoreInformationSettings storeInformationSettings
+@inject Nop.Services.Localization.ILanguageService languageService
+@inject IThemeContext themeContext
+@{
+
+    var themeName = themeContext.WorkingThemeName;
+
+    var displayMiniProfiler = storeInformationSettings.DisplayMiniProfilerInPublicStore
+                              && (!storeInformationSettings.DisplayMiniProfilerForAdminOnly || permissionService.Authorize(StandardPermissionProvider.AccessAdminPanel));
+
+    //EShopper Scripts
+    Html.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Scripts/styleSheetToogle.js");
+    Html.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Scripts/jquery.slimscroll.min.js");
+    Html.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Scripts/html5shiv.js");
+    Html.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Scripts/main.js");
+    Html.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Scripts/jquery.prettyPhoto.js");
+    Html.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Scripts/price-range.js");
+    Html.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Scripts/jquery.scrollUp.min.js");
+    Html.AppendScriptParts(ResourceLocation.Footer, $"~/lib/jquery-ui/jquery-ui-1.10.3/jquery-ui-1.10.3.custom.js");
+    Html.AppendScriptParts(ResourceLocation.Footer, $"~/Themes/{themeName}/Content/bootstrap-3.2.0/js/bootstrap.min.js");
+
+    //resources
+    Html.AppendScriptParts(ResourceLocation.Footer, "~/js/public.countryselect.js");
+    Html.AppendScriptParts(ResourceLocation.Footer, "~/js/public.ajaxcart.js");
+    Html.AppendScriptParts(ResourceLocation.Footer, "~/js/public.common.js");
+    //when jQuery migrate script logging is active you will see the log in the browser console
+    if (commonSettings.JqueryMigrateScriptLoggingActive)
+    {
+        Html.AppendScriptParts(ResourceLocation.Footer, "~/lib/jquery-migrate/jquery-migrate-3.1.0.js");
+    }
+    else
+    {
+        Html.AppendScriptParts(ResourceLocation.Footer, "~/lib/jquery-migrate/jquery-migrate-3.1.0.min.js");
+    }
+    Html.AppendScriptParts(ResourceLocation.Footer, "~/lib/jquery-ui/jquery-ui-1.12.1.custom/jquery-ui.min.js");
+    Html.AppendScriptParts(ResourceLocation.Footer, "~/lib/jquery-validate/jquery.validate.unobtrusive-v3.2.11/jquery.validate.unobtrusive.min.js");
+    Html.AppendScriptParts(ResourceLocation.Footer, "~/lib/jquery-validate/jquery.validate-v1.19.1/jquery.validate.min.js");
+
+    //Html.AppendScriptParts(ResourceLocation.Footer, "~/lib/jquery.unobtrusive-ajax.min.js");
+    //Html.AppendScriptParts(ResourceLocation.Footer, "~/lib/jquery/jquery-1.10.2.min.js");
+
+    Html.AppendScriptParts(ResourceLocation.Footer, "~/lib/jquery/jquery-3.4.1.min.js");
+
+}
+<!DOCTYPE html>
+<html @await Html.PartialAsync("LanguageAttributes")>
+<head>
+    <title>@Html.NopTitle(true)</title>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+    <meta name="description" content="@(Html.NopMetaDescription())" />
+    <meta name="keywords" content="@(Html.NopMetaKeywords())" />
+    <meta name="generator" content="nopCommerce" />
+    @Html.NopHeadCustom()
+    @*This is used so that themes can inject content into the header*@
+    @await Html.PartialAsync("Head")
+    @await Component.InvokeAsync("Widget", new { widgetZone = "head_html_tag" })
+    @Html.NopCssFiles(ResourceLocation.Head)
+    @Html.NopScripts(ResourceLocation.Head)
+    @Html.NopCanonicalUrls()
+    @await Component.InvokeAsync("NewsRssHeaderLink")
+    @await Component.InvokeAsync("BlogRssHeaderLink")
+    @*Favicon - upload favicon.ico file to the root directory*@
+    @await Component.InvokeAsync("Favicon")
+    @if (displayMiniProfiler)
+    {
+        <mini-profiler />
+    }
+
+    <!--Powered by nopCommerce - http://www.nopCommerce.com-->
+    <!--Copyright (c) 2008-2013-->
+
+
+</head>
+<body>
+    @RenderBody()
+    @Html.NopCssFiles(ResourceLocation.Footer)
+    @Html.NopScripts(ResourceLocation.Footer)
+    @Html.NopInlineScripts(ResourceLocation.Footer)
+</body>
+</html>

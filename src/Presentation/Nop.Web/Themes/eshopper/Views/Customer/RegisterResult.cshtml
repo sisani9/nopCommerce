@@ -1,0 +1,26 @@
+﻿@model RegisterResultModel
+@using Nop.Web.Models.Customer;
+@{
+    Layout = "_ColumnsTwo";
+
+    //title
+    Html.AddTitleParts(T("PageTitle.Register").Text);
+}
+<form asp-route="RegisterResult" asp-route-returnurl="@Context.Request.Query["ReturnUrl"]" method="post">
+    <div class="features_items my-account-page">
+        <h2 class="title text-center">@T("Account.Register")</h2>
+        <div asp-validation-summary="ModelOnly" class="message-error"></div>
+        <div class="custom-page-box-div">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="result">
+                        @Model.Result
+                    </div>
+                    <div class="buttons">
+                        <input type="submit" name="register-continue" class="button-1 btn btn-primary register-continue-button" value="@T("Account.Register.Result.Continue")" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

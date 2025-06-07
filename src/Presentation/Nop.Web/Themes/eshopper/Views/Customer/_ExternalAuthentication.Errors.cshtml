@@ -1,0 +1,15 @@
+﻿@{
+    var errors = ExternalAuthorizerHelper.RetrieveErrorsToDisplay();
+}
+@using Nop.Services.Authentication.External
+@if (errors != null && errors.Count > 0)
+{
+    <div class="external-auth-errors alert alert-danger square-box">
+        <ul>
+            @foreach (var error in errors)
+            {
+                <li>@error</li>
+            }
+        </ul>
+    </div>
+}

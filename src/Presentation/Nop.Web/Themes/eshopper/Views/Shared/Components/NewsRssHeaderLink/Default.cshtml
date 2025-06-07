@@ -1,0 +1,10 @@
+﻿@using Nop.Core
+@using Nop.Services.Localization
+@inject Nop.Services.Localization.ILocalizationService localizationService
+@inject IStoreContext storeContext
+@inject IWorkContext workContext
+@{
+    var link = Url.RouteUrl("NewsRSS", new { languageId = workContext.WorkingLanguage.Id }, this.Url.ActionContext.HttpContext.Request.Scheme);
+    var storeName = localizationService.GetLocalized(storeContext.CurrentStore, x => x.Name);
+}
+<link href="@link" rel="alternate" type="application/rss+xml" title="@storeName: News" />

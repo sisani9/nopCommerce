@@ -1,0 +1,48 @@
+﻿@using Nop.Core;
+@using Nop.Core.Infrastructure;
+@using Nop.Web.Framework.UI
+@inject IThemeContext themeContext
+@{
+
+    var themeName = themeContext.WorkingThemeName;
+    var supportRtl = EngineContext.Current.Resolve<IWorkContext>().WorkingLanguage.Rtl;
+    if (supportRtl)
+    {
+        Html.AppendCssFileParts($"~/Themes/{themeName}/Content/css/main.css");
+        Html.AppendCssFileParts($"~/Themes/{themeName}/Content/css/animate.css");
+        Html.AppendCssFileParts($"~/Themes/{themeName}/Content/css/prettyPhoto.css");
+        Html.AppendCssFileParts($"~/Themes/{themeName}/Content/css/price-range.css");
+        Html.AppendCssFileParts($"~/Themes/{themeName}/Content/css/responsive.css");
+        Html.AppendCssFileParts($"~/Themes/{themeName}/Content/css/styles.rtl.css");
+
+        Html.AppendCssFileParts($"~/Themes/{themeName}/Content/bootstrap-3.2.0/css/bootstrap.rtl.css");
+        Html.AppendCssFileParts($"~/Themes/{themeName}/Content/bootstrap-3.2.0/css/bootstrap.min.css");
+        Html.AppendCssFileParts($"~/Themes/{themeName}/Content/font-awosome-4.0.3/css/font-awesome.rtl.css");
+        Html.AppendCssFileParts("~/lib/jquery-ui/jquery-ui-1.10.3/jquery-ui-themes/smoothness/jquery-ui-1.10.3.custom.min.css");
+    }
+    else
+    {
+        <link rel="stylesheet" type="text/css" href="~/Themes/eshopper/Content/css/color-styles/orange.css" title="orange" media="screen" />
+        <link rel="alternate stylesheet" type="text/css" href="~/Themes/eshopper/Content/css/color-styles/blue.css" title="blue" media="screen" />
+        <link rel="alternate stylesheet" type="text/css" href="~/Themes/eshopper/Content/css/color-styles/red.css" title="red" media="screen" />
+        <link rel="alternate stylesheet" type="text/css" href="~/Themes/eshopper/Content/css/color-styles/darkblue.css" title="darkblue" media="screen" />
+        <link rel="alternate stylesheet" type="text/css" href="~/Themes/eshopper/Content/css/color-styles/cyan.css" title="cyan" media="screen" />
+        <link rel="alternate stylesheet" type="text/css" href="~/Themes/eshopper/Content/css/color-styles/green.css" title="green" media="screen" />
+
+
+
+
+        Html.AppendCssFileParts($"~/Themes/{themeName}/Content/css/main.css");
+        Html.AppendCssFileParts($"~/Themes/{themeName}/Content/css/animate.css");
+        Html.AppendCssFileParts($"~/Themes/{themeName}/Content/css/prettyPhoto.css");
+        Html.AppendCssFileParts($"~/Themes/{themeName}/Content/css/price-range.css");
+        Html.AppendCssFileParts($"~/Themes/{themeName}/Content/css/responsive.css");
+
+        Html.AppendCssFileParts($"~/Themes/{themeName}/Content/bootstrap-3.2.0/css/bootstrap.min.css");
+        Html.AppendCssFileParts($"~/Themes/{themeName}/Content/font-awosome-4.0.3/css/font-awesome.min.css");
+        Html.AppendCssFileParts("~/lib/jquery-ui/jquery-ui-1.10.3/jquery-ui-themes/smoothness/jquery-ui-1.10.3.custom.min.css");
+    }
+
+    @*<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>*@
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+}
