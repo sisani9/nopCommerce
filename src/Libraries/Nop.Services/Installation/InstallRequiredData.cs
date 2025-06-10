@@ -1554,7 +1554,8 @@ public partial class InstallationService
             PhoneEnabled = true,
             PhoneRequired = true,
             FaxEnabled = true,
-            DefaultCountryId = await GetFirstEntityIdAsync<Country>(c => c.ThreeLetterIsoCode == _installationSettings.RegionInfo.ThreeLetterISORegionName)
+            DefaultCountryId = await GetFirstEntityIdAsync<Country>(c => c.ThreeLetterIsoCode == _installationSettings.RegionInfo.ThreeLetterISORegionName),
+            PrePopulateCountryByCustomer = true
         });
 
         await SaveSettingAsync(dictionary, new MediaSettings
@@ -1578,7 +1579,6 @@ public partial class InstallationService
             DefaultImageQuality = 80,
             MultipleThumbDirectories = false,
             ImportProductImagesUsingHash = true,
-            AzureCacheControlHeader = string.Empty,
             UseAbsoluteImagePath = true,
             AutoOrientImage = false,
             VideoIframeAllow = "fullscreen",
