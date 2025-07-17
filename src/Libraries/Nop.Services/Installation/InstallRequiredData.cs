@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 using Nop.Core;
 using Nop.Core.Configuration;
@@ -28,6 +29,7 @@ using Nop.Core.Domain.Shipping;
 using Nop.Core.Domain.Stores;
 using Nop.Core.Domain.Tax;
 using Nop.Core.Domain.Topics;
+using Nop.Core.Domain.Translation;
 using Nop.Core.Domain.Vendors;
 using Nop.Core.Http;
 using Nop.Core.Security;
@@ -35,6 +37,7 @@ using Nop.Services.Catalog;
 using Nop.Services.Common;
 using Nop.Services.Customers;
 using Nop.Services.Helpers;
+using Nop.Services.Messages;
 using Nop.Services.Seo;
 
 namespace Nop.Services.Installation;
@@ -311,9 +314,13 @@ public partial class InstallationService
     protected virtual async Task InstallLanguagesAsync()
     {
         var defaultCulture = new CultureInfo(NopCommonDefaults.DefaultLanguageCulture);
+        var re = new Regex(" \\(.*\\)", RegexOptions.Compiled);
+        var languageName = re.Replace(defaultCulture.NativeName, string.Empty);
+        languageName = languageName[0].ToString().ToUpper() + languageName[1..];
+
         var defaultLanguage = new Language
         {
-            Name = defaultCulture.TwoLetterISOLanguageName.ToUpperInvariant(),
+            Name = languageName,
             LanguageCulture = defaultCulture.Name,
             UniqueSeoCode = defaultCulture.TwoLetterISOLanguageName,
             FlagImageFileName = $"{defaultCulture.Name.ToLowerInvariant()[^2..]}.png",
@@ -338,9 +345,12 @@ public partial class InstallationService
         if (cultureInfo == null || regionInfo == null || cultureInfo.Name == NopCommonDefaults.DefaultLanguageCulture)
             return;
 
+        languageName = re.Replace(cultureInfo.NativeName, string.Empty);
+        languageName = languageName[0].ToString().ToUpper() + languageName[1..];
+
         var language = new Language
         {
-            Name = cultureInfo.TwoLetterISOLanguageName.ToUpperInvariant(),
+            Name = languageName,
             LanguageCulture = cultureInfo.Name,
             UniqueSeoCode = cultureInfo.TwoLetterISOLanguageName,
             FlagImageFileName = $"{regionInfo.TwoLetterISORegionName.ToLowerInvariant()}.png",
@@ -1097,6 +1107,24 @@ public partial class InstallationService
     }
 
     /// <summary>
+    /// Installs a default type of newsletter subscription
+    /// </summary>
+    /// <returns>A task that represents the asynchronous operation</returns>
+    protected virtual async Task InstallNewsLetterSubscriptionTypeAsync()
+    {
+        var newsLetterSubscriptionType = new List<NewsLetterSubscriptionType>
+        {
+            new() {
+                Name = NopMessageDefaults.DefaultSubscriptionType,
+                TickedByDefault = true,
+                DisplayOrder = 0
+            }
+        };
+
+        await _dataProvider.BulkInsertEntitiesAsync(newsLetterSubscriptionType);
+    }
+
+    /// <summary>
     /// Installs a default topic templates
     /// </summary>
     /// <returns>A task that represents the asynchronous operation</returns>
@@ -1303,8 +1331,6 @@ public partial class InstallationService
             PopupGridPageSize = 7,
             GridPageSizes = "7, 15, 20, 50, 100",
             RichEditorAdditionalSettings = null,
-            RichEditorAllowJavaScript = false,
-            RichEditorAllowStyleTag = false,
             UseRichEditorForCustomerEmails = false,
             UseRichEditorInMessageTemplates = false,
             CheckLicense = true,
@@ -1458,6 +1484,16 @@ public partial class InstallationService
             IgnoreRtlPropertyForAdminArea = false
         });
 
+        await SaveSettingAsync(dictionary, new TranslationSettings
+        {
+            TranslateFromLanguageId = (await Table<Language>().FirstAsync()).Id,
+            AllowPreTranslate = false,
+            GoogleApiKey = string.Empty,
+            NotTranslateLanguages = new List<int>(),
+            DeepLAuthKey = string.Empty,
+            TranslationServiceId = (int)TranslationServiceType.GoogleTranslate
+        });
+
         await SaveSettingAsync(dictionary, new CustomerSettings
         {
             UsernamesEnabled = false,
@@ -1514,7 +1550,6 @@ public partial class InstallationService
             FaxEnabled = false,
             AcceptPrivacyPolicyEnabled = false,
             NewsletterEnabled = true,
-            NewsletterTickedByDefault = true,
             HideNewsletterBlock = false,
             NewsletterBlockAllowToUnsubscribe = false,
             OnlineCustomerMinutes = 20,
@@ -1854,7 +1889,7 @@ public partial class InstallationService
             ActiveDiscussionsPageSize = 50,
             LatestCustomerPostsPageSize = 10,
             ShowCustomersPostCount = true,
-            ForumEditor = EditorType.BBCodeEditor,
+            ForumEditor = EditorType.MarkdownEditor,
             SignaturesEnabled = true,
             AllowPrivateMessages = false,
             ShowAlertForPM = false,
@@ -1868,7 +1903,8 @@ public partial class InstallationService
             ActiveDiscussionsFeedCount = 25,
             ForumFeedsEnabled = false,
             ForumFeedCount = 10,
-            ForumSearchTermMinimumLength = 3
+            ForumSearchTermMinimumLength = 3,
+            TopicMetaDescriptionLength = 160
         });
 
         await SaveSettingAsync(dictionary, new VendorSettings
@@ -2580,6 +2616,11 @@ public partial class InstallationService
                     Name = "Add a new widget"
                 },
                 new() {
+                    SystemKeyword = "AddSubscriptionType",
+                    Enabled = true,
+                    Name = "Add a new subscription type"
+                },
+                new() {
                     SystemKeyword = "DeleteActivityLog",
                     Enabled = true,
                     Name = "Delete activity log"
@@ -2763,6 +2804,11 @@ public partial class InstallationService
                     SystemKeyword = "DeleteStore",
                     Enabled = true,
                     Name = "Delete a store"
+                },
+                new() {
+                    SystemKeyword = "DeleteSubscriptionType",
+                    Enabled = true,
+                    Name = "Delete a subscription type"
                 },
                 new() {
                     SystemKeyword = "DeleteSystemLog",
@@ -2968,6 +3014,11 @@ public partial class InstallationService
                     SystemKeyword = "EditStore",
                     Enabled = true,
                     Name = "Edit a store"
+                },
+                new() {
+                    SystemKeyword = "EditSubscriptionType",
+                    Enabled = true,
+                    Name = "Edit a subscription type"
                 },
                 new() {
                     SystemKeyword = "EditTask",

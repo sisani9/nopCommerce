@@ -1,18 +1,21 @@
 ﻿using FluentMigrator;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Common;
+using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Directory;
+using Nop.Core.Domain.Localization;
 using Nop.Core.Domain.Media;
 using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Security;
-using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Tax;
+using Nop.Core.Domain.Translation;
 using Nop.Core.Domain.Vendors;
 using Nop.Core.Infrastructure;
 using Nop.Data;
 using Nop.Data.Migrations;
 using Nop.Services.Common;
 using Nop.Services.Configuration;
+using Nop.Core.Domain.Forums;
 
 namespace Nop.Web.Framework.Migrations.UpgradeTo490;
 
@@ -113,6 +116,26 @@ public class SettingMigration : MigrationBase
             settingService.SaveSetting(pdfSettings, settings => pdfSettings.ImageTargetSize);
         }
 
+        //#7397
+        var richEditorAllowJavaScript = settingService.GetSetting("adminareasettings.richeditorallowjavascript");
+        if (richEditorAllowJavaScript is not null)
+            settingService.DeleteSetting(richEditorAllowJavaScript);
+
+        var richEditorAllowStyleTag = settingService.GetSetting("adminareasettings.richeditorallowstyletag");
+        if (richEditorAllowStyleTag is not null)
+            settingService.DeleteSetting(richEditorAllowStyleTag);
+
+        if (settingService.SettingExists(adminAreaSettings, settings => settings.RichEditorAdditionalSettings))
+        {
+            adminAreaSettings.RichEditorAdditionalSettings = string.Empty;
+            settingService.SaveSetting(adminAreaSettings, settings => settings.RichEditorAdditionalSettings);
+        }
+
+        //#6874
+        var newsletterTickedByDefault = settingService.GetSetting("customersettings.newslettertickedbydefault");
+        if (newsletterTickedByDefault is not null)
+            settingService.DeleteSetting(newsletterTickedByDefault);
+
         //#820
         var currencySettings = settingService.LoadSetting<CurrencySettings>();
         if (!settingService.SettingExists(currencySettings, settings => settings.DisplayCurrencySymbolInCurrencySelector))
@@ -164,6 +187,54 @@ public class SettingMigration : MigrationBase
         {
             addressSetting.PrePopulateCountryByCustomer = true;
             settingService.SaveSetting(addressSetting, settings => settings.PrePopulateCountryByCustomer);
+        }
+
+        //#7747
+        var forumSettings = settingService.LoadSetting<ForumSettings>();
+        if (!settingService.SettingExists(forumSettings, settings => settings.TopicMetaDescriptionLength))
+        {
+            forumSettings.TopicMetaDescriptionLength = 160;
+            settingService.SaveSetting(forumSettings, settings => settings.TopicMetaDescriptionLength);
+        }
+
+        //#7388
+        var translationSettings = settingService.LoadSetting<TranslationSettings>();
+        if (!settingService.SettingExists(translationSettings, settings => settings.AllowPreTranslate))
+        {
+            translationSettings.AllowPreTranslate = false;
+            settingService.SaveSetting(translationSettings, settings => settings.AllowPreTranslate);
+        }
+
+        if (!settingService.SettingExists(translationSettings, settings => settings.TranslateFromLanguageId))
+        {
+            var languageRepository = EngineContext.Current.Resolve<IRepository<Language>>();
+
+            translationSettings.TranslateFromLanguageId = languageRepository.Table.First().Id;
+            settingService.SaveSetting(translationSettings, settings => settings.TranslateFromLanguageId);
+        }
+
+        if (!settingService.SettingExists(translationSettings, settings => settings.GoogleApiKey))
+        {
+            translationSettings.GoogleApiKey = string.Empty;
+            settingService.SaveSetting(translationSettings, settings => settings.GoogleApiKey);
+        }
+
+        if (!settingService.SettingExists(translationSettings, settings => settings.DeepLAuthKey))
+        {
+            translationSettings.DeepLAuthKey = string.Empty;
+            settingService.SaveSetting(translationSettings, settings => settings.DeepLAuthKey);
+        }
+
+        if (!settingService.SettingExists(translationSettings, settings => settings.NotTranslateLanguages))
+        {
+            translationSettings.NotTranslateLanguages = new List<int>();
+            settingService.SaveSetting(translationSettings, settings => settings.NotTranslateLanguages);
+        }
+
+        if (!settingService.SettingExists(translationSettings, settings => settings.TranslationServiceId))
+        {
+            translationSettings.TranslationServiceId = 0;
+            settingService.SaveSetting(translationSettings, settings => settings.TranslationServiceId);
         }
     }
 
