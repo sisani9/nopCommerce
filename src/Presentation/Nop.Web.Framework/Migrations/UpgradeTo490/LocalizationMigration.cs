@@ -290,6 +290,34 @@ public class LocalizationMigration : MigrationBase
             ["Enums.Nop.Core.Domain.Translation.TranslationServiceType.DeepL"] = "DeepL",
             ["Admin.Translation.Translated.Success"] = "Pre-translation has been completed (all possible fields are pre-filled)",
             ["Admin.Translation.Translated.Warning"] = "Errors occurred during pre-translation, see details in the log",
+
+            //#1921
+            ["Admin.Configuration.Settings.ShoppingCart.AllowMultipleWishlist"] = "Allow multiple wishlists",
+            ["Admin.Configuration.Settings.ShoppingCart.AllowMultipleWishlist.Hint"] = "A value indicating whether customers can use multiple wishlists.",
+            ["Admin.Configuration.Settings.ShoppingCart.MaximumNumberOfCustomWishlist"] = "Maximum number of custom wishlists",
+            ["Admin.Configuration.Settings.ShoppingCart.MaximumNumberOfCustomWishlist.Hint"] = "Specify the maximum number of custom wishlists a customer can use.",
+            ["Wishlist.AddNewWishlist"] = "Add new wishlist",
+            ["Wishlist.AddCustomWishlist"] = "Custom wishlist",
+            ["Wishlist.EnterWishlistName"] = "Enter wishlist name",
+            ["Wishlist.Default"] = "Wishlist",
+            ["Wishlist.MoveToCustomWishlist"] = "Move to wishlist",
+            ["Wishlist.NotFound"] = "Wishlist not found.",
+            ["Wishlist.DeleteWishlist"] = "Delete wishlist",
+            ["Wishlist.SelectWishlist"] = "Specify your wishlist",
+            ["Wishlist.MaximumNumberReached"] = "You cannot create more than {0} custom wishlists.", 
+            ["Wishlist.NameRequired"] = "A wishlist name is required.",
+            ["Products.ProductHasBeenAddedToTheCustomWishlist.Link"] = "The product has been added to your <a href=\"{0}\">{1}</a>",
+            ["Products.ProductHasBeenAddedToTheWishlistAndMoved.Link"] = "The product has been added to your <a href=\"{0}\">wishlist</a>. Want to move it to a <a href=\"#\" onclick=\"{1}\">custom wishlist</a>?",
+            ["Wishlist.MultipleWishlistNotForGuest"] = "The multiple wishlist functionality is only available to registered customers.",
+            ["Wishlist.NotAllowMultipleWishlist"] = "Multiple wishlist functionality is disabled.",
+ 
+            //#7739
+            ["Admin.System.Maintenance.DeleteThumbFiles.FilesCount"] = "Total files: {0}",
+            ["Admin.System.Maintenance.DeleteThumbFiles"] = "Delete image thumbs",
+            ["Admin.System.Maintenance.DeleteThumbFiles.FilesSize"] = "Total file size: {0} MB",
+            ["Admin.System.Maintenance.DeleteThumbFiles.Text"] = "Delete image thumbs from the thumbs directory. All files except the placeholder.txt file.",
+            ["Admin.System.Maintenance.DeleteThumbFiles.IsNotSupported"] = "Delete image thumbs is not supported by current picture thumb service.",
+            ["Admin.System.Maintenance.DeleteThumbFiles.Deleted"] = "All image thumbs were deleted.",
         }, languageId);
 
         #endregion

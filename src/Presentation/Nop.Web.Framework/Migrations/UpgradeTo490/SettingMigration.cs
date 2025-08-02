@@ -236,6 +236,29 @@ public class SettingMigration : MigrationBase
             translationSettings.TranslationServiceId = 0;
             settingService.SaveSetting(translationSettings, settings => settings.TranslationServiceId);
         }
+
+        //#7779
+        var robotsTxtSettings = settingService.LoadSetting<RobotsTxtSettings>();
+        var newDisallowPaths = new List<string> { "/*?*returnurl=", "/*?*ReturnUrl=" };
+
+        foreach (var newDisallowPath in newDisallowPaths.Where(newDisallowPath => !robotsTxtSettings.DisallowPaths.Contains(newDisallowPath)))
+            robotsTxtSettings.DisallowPaths.Add(newDisallowPath);
+
+        robotsTxtSettings.DisallowPaths.Sort();
+        settingService.SaveSetting(robotsTxtSettings, settings => settings.DisallowPaths);
+
+        //#1921
+        var shoppingCartSettings = settingService.LoadSetting<ShoppingCartSettings>();
+        if (!settingService.SettingExists(shoppingCartSettings, settings => settings.AllowMultipleWishlist))
+        {
+            shoppingCartSettings.AllowMultipleWishlist = true;
+            settingService.SaveSetting(shoppingCartSettings, settings => settings.AllowMultipleWishlist);
+        }
+        if (!settingService.SettingExists(shoppingCartSettings, settings => settings.MaximumNumberOfCustomWishlist))
+        {
+            shoppingCartSettings.MaximumNumberOfCustomWishlist = 10;
+            settingService.SaveSetting(shoppingCartSettings, settings => settings.MaximumNumberOfCustomWishlist);
+        }
     }
 
     public override void Down()
